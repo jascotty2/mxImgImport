@@ -1,0 +1,7 @@
+name: mxImgImport
+main: de.yahoo.chrimarti7.mxImgImport.mxImgImport
+version: 1.10
+commands:
+  imgimport:
+    description: Import an Image
+    usage: /imgimport
