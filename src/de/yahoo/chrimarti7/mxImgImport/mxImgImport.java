@@ -57,6 +57,10 @@ public class mxImgImport extends JavaPlugin
 		pPlayer.sendMessage(ChatColor.GRAY+m_FullVersionName+" help ------------------------");
 		pPlayer.sendMessage(ChatColor.YELLOW+"/imgimport file [Filename]" + ChatColor.GRAY + "   Imports the Image. [Filename] is the Filename");
 		pPlayer.sendMessage(ChatColor.GRAY + "It is relative to the plugins/mxImgImport folder.");
+		pPlayer.sendMessage(ChatColor.YELLOW+"/imgimport file [Filename] w" + ChatColor.GRAY + "   Imports the Image only with wool Blocks.");
+		pPlayer.sendMessage(ChatColor.GRAY + "Infos at the other parameters see above.");
+		pPlayer.sendMessage(ChatColor.YELLOW+"/imgimport undo" + ChatColor.GRAY + "    Undoes your last import.");
+		pPlayer.sendMessage(ChatColor.GRAY + "You can undo an import until the next time the Server is reloaded.");
 		pPlayer.sendMessage(ChatColor.GRAY+"------------------------------------------------");
 	}
 

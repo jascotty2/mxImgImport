@@ -121,7 +121,7 @@ public class mxImgImportCommand implements mxCommand
 	public boolean Do(CommandSender sender, Command command, String label,
 			String[] args) {
 
-		if (args.length != 2)
+		if (args.length < 2)
 		{
 			mxImgImport.SendHelpText(sender);
 			return false;
@@ -191,37 +191,59 @@ public class mxImgImportCommand implements mxCommand
 		}
 		
 		HashMap<RGB, MatM> pBlockMap = new HashMap<RGB, MatM>();
-		pBlockMap.put(new RGB(160,160,160), new MatM(Material.STONE, 0));
-		pBlockMap.put(new RGB(188,152,98), new MatM(Material.WOOD, 0));
-		pBlockMap.put(new RGB(255,255,255), new MatM(Material.WOOL, 0));
-		pBlockMap.put(new RGB(214,207,154),new MatM( Material.SANDSTONE, 0));
-		pBlockMap.put(new RGB(196,86,205), new MatM(Material.WOOL,1));
-		pBlockMap.put(new RGB(114,147,215), new MatM(Material.WOOL, 2));
-		pBlockMap.put(new RGB(33,200,214), new MatM(Material.WOOL, 3));
-		pBlockMap.put(new RGB(210,210,14),new MatM( Material.WOOL, 4));
-		pBlockMap.put(new RGB(100,230,0),new MatM( Material.WOOL, 5));
-		pBlockMap.put(new RGB(224,155,173),new MatM( Material.WOOL, 6));
-		pBlockMap.put(new RGB(71,71,71),new MatM( Material.WOOL, 7));
-		pBlockMap.put(new RGB(173,180,180),new MatM( Material.WOOL, 8));
-		pBlockMap.put(new RGB(43,129,166),new MatM( Material.WOOL, 9));
-		pBlockMap.put(new RGB(90,0,90),new MatM( Material.WOOL, 10));
-		pBlockMap.put(new RGB(40,53,161),new MatM( Material.WOOL, 11));
-		pBlockMap.put(new RGB(93,56,30),new MatM( Material.WOOL, 12));
-		pBlockMap.put(new RGB(57,78,25),new MatM( Material.WOOL, 13));
-		pBlockMap.put(new RGB(250,0,0),new MatM( Material.WOOL, 14));
-		pBlockMap.put(new RGB(0,0,0),new MatM( Material.WOOL, 15));
-		pBlockMap.put(new RGB(150,125,70),new MatM( Material.LOG, 0));
-		pBlockMap.put(new RGB(57,46,28),new MatM( Material.LOG, 1));
-		pBlockMap.put(new RGB(255,251,93),new MatM( Material.GOLD_BLOCK, 0));
-		pBlockMap.put(new RGB(213,213,213),new MatM( Material.IRON_BLOCK, 0));
-		pBlockMap.put(new RGB(176,176,176),new MatM( Material.DOUBLE_STEP, 0));
-		pBlockMap.put(new RGB(46,46,61),new MatM( Material.OBSIDIAN, 0));
-		pBlockMap.put(new RGB(120,108,30), new MatM(Material.CHEST, 0));
-		//pBlockMap.put(new RGB(35,80,35),new MatM( Material.MOSSY_COBBLESTONE, 0));
-		pBlockMap.put(new RGB(160,240,240),new MatM( Material.DIAMOND_BLOCK, 0));
-//		pBlockMap.put(new RGB(100,56,56),new MatM( Material.NETHERRACK, 0));
-	//	pBlockMap.put(new RGB(200,0,200),new MatM( Material.GLOWSTONE, 0));
-		
+		if (args.length == 2)
+		{
+			pBlockMap.put(new RGB(160,160,160), new MatM(Material.STONE, 0));
+			pBlockMap.put(new RGB(188,152,98), new MatM(Material.WOOD, 0));
+			pBlockMap.put(new RGB(255,255,255), new MatM(Material.WOOL, 0));
+			pBlockMap.put(new RGB(214,207,154),new MatM( Material.SANDSTONE, 0));
+			pBlockMap.put(new RGB(196,86,205), new MatM(Material.WOOL,1));
+			pBlockMap.put(new RGB(114,147,215), new MatM(Material.WOOL, 2));
+			pBlockMap.put(new RGB(33,200,214), new MatM(Material.WOOL, 3));
+			pBlockMap.put(new RGB(210,210,14),new MatM( Material.WOOL, 4));
+			pBlockMap.put(new RGB(100,230,0),new MatM( Material.WOOL, 5));
+			pBlockMap.put(new RGB(224,155,173),new MatM( Material.WOOL, 6));
+			pBlockMap.put(new RGB(71,71,71),new MatM( Material.WOOL, 7));
+			pBlockMap.put(new RGB(173,180,180),new MatM( Material.WOOL, 8));
+			pBlockMap.put(new RGB(43,129,166),new MatM( Material.WOOL, 9));
+			pBlockMap.put(new RGB(90,0,90),new MatM( Material.WOOL, 10));
+			pBlockMap.put(new RGB(40,53,161),new MatM( Material.WOOL, 11));
+			pBlockMap.put(new RGB(93,56,30),new MatM( Material.WOOL, 12));
+			pBlockMap.put(new RGB(57,78,25),new MatM( Material.WOOL, 13));
+			pBlockMap.put(new RGB(250,0,0),new MatM( Material.WOOL, 14));
+			pBlockMap.put(new RGB(0,0,0),new MatM( Material.WOOL, 15));
+			pBlockMap.put(new RGB(150,125,70),new MatM( Material.LOG, 0));
+			pBlockMap.put(new RGB(57,46,28),new MatM( Material.LOG, 1));
+			pBlockMap.put(new RGB(255,251,93),new MatM( Material.GOLD_BLOCK, 0));
+			pBlockMap.put(new RGB(213,213,213),new MatM( Material.IRON_BLOCK, 0));
+			pBlockMap.put(new RGB(176,176,176),new MatM( Material.DOUBLE_STEP, 0));
+			pBlockMap.put(new RGB(46,46,61),new MatM( Material.OBSIDIAN, 0));
+			pBlockMap.put(new RGB(120,108,30), new MatM(Material.CHEST, 0));
+			//pBlockMap.put(new RGB(35,80,35),new MatM( Material.MOSSY_COBBLESTONE, 0));
+			pBlockMap.put(new RGB(160,240,240),new MatM( Material.DIAMOND_BLOCK, 0));
+	//		pBlockMap.put(new RGB(100,56,56),new MatM( Material.NETHERRACK, 0));
+		//	pBlockMap.put(new RGB(200,0,200),new MatM( Material.GLOWSTONE, 0));
+		}
+		else
+		{
+			pBlockMap.put(new RGB(188,152,98), new MatM(Material.WOOD, 0));
+			pBlockMap.put(new RGB(255,255,255), new MatM(Material.WOOL, 0));
+			pBlockMap.put(new RGB(196,86,205), new MatM(Material.WOOL,1));
+			pBlockMap.put(new RGB(114,147,215), new MatM(Material.WOOL, 2));
+			pBlockMap.put(new RGB(33,200,214), new MatM(Material.WOOL, 3));
+			pBlockMap.put(new RGB(210,210,14),new MatM( Material.WOOL, 4));
+			pBlockMap.put(new RGB(100,230,0),new MatM( Material.WOOL, 5));
+			pBlockMap.put(new RGB(224,155,173),new MatM( Material.WOOL, 6));
+			pBlockMap.put(new RGB(71,71,71),new MatM( Material.WOOL, 7));
+			pBlockMap.put(new RGB(173,180,180),new MatM( Material.WOOL, 8));
+			pBlockMap.put(new RGB(43,129,166),new MatM( Material.WOOL, 9));
+			pBlockMap.put(new RGB(90,0,90),new MatM( Material.WOOL, 10));
+			pBlockMap.put(new RGB(40,53,161),new MatM( Material.WOOL, 11));
+			pBlockMap.put(new RGB(93,56,30),new MatM( Material.WOOL, 12));
+			pBlockMap.put(new RGB(57,78,25),new MatM( Material.WOOL, 13));
+			pBlockMap.put(new RGB(250,0,0),new MatM( Material.WOOL, 14));
+			pBlockMap.put(new RGB(0,0,0),new MatM( Material.WOOL, 15));
+		}
 		
 		if (pImageFile.getWidth() > 100 || pImageFile.getHeight() > 100)
 		{
