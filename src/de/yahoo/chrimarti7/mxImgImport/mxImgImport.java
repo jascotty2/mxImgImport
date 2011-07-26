@@ -18,7 +18,7 @@ public class mxImgImport extends JavaPlugin
 	/*
 	 * Version Nummer + String
 	 */
-	static final String m_FullVersionName = "mxImgImport v1.2";
+	static final String m_FullVersionName = "mxImgImport v1.3";
 
 	/*
 	 * Reference to the Logfile
