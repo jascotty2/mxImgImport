@@ -12,7 +12,7 @@ public class mxImgImportPlayerListener extends PlayerListener{
 	HashMap<Player, mxImgImportState> m_pMap;
 	mxImgImport						  m_pPlugin;
 	
-	mxImgImportPlayerListener(mxImgImport pPlugin)
+	public mxImgImportPlayerListener(mxImgImport pPlugin)
 	{
 		m_pMap = new HashMap<Player, mxImgImportState>();
 		m_pPlugin = pPlugin;

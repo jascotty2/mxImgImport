@@ -2,6 +2,7 @@
 package de.yahoo.chrimarti7.mxImgImport;
 
 //---------------------------------------------------------------------------
+import java.io.File;
 import java.util.logging.Logger;
 
 import org.bukkit.ChatColor;
@@ -48,6 +49,10 @@ public class mxImgImport extends JavaPlugin
 		PluginManager pm = getServer().getPluginManager();
 		pm.registerEvent(Event.Type.PLAYER_INTERACT, m_pPlayerListener,
 				Event.Priority.Normal, this);
+		
+		File pFile = new File("plugins/mxImgImport/");
+		if (!pFile.exists())
+			pFile.mkdir();
 		
 		log.info(m_FullVersionName + " loaded.");
 	}

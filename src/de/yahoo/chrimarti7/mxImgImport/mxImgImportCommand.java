@@ -77,7 +77,7 @@ public class mxImgImportCommand implements mxCommand
 	
 	HashMap<Location,MatM> m_pUndoMap;
 	
-	public mxImgImportCommand(Location loc1, Location loc2) 
+	public mxImgImportCommand(Location loc1, Location loc2)
 	{
 		m_Loc1 = loc1;
 		m_Loc2 = loc2;
@@ -137,7 +137,15 @@ public class mxImgImportCommand implements mxCommand
 			return false;
 		}
 		
+	
+		
 		String Filename = args[1];
+		File pF = new File("plugins/mxImgImport/"+Filename);
+		if (!pF.exists())
+		{
+			sender.sendMessage(ChatColor.RED + "File was not found. Don't forget to provide the file-ending in the filename too ;)");
+			return false;
+		}
 		
 		if (Filename.substring(Filename.length()-4).equalsIgnoreCase(".jpg")||
 				Filename.substring(Filename.length()-4).equalsIgnoreCase(".JPG"))
@@ -162,6 +170,8 @@ public class mxImgImportCommand implements mxCommand
 			sender.sendMessage(ChatColor.RED + "The Selection Points have to lie on a Plane");
 			return false;
 		}
+		
+		
 		
 		int NumZero = 0;
 		if (UnitX == 0)
@@ -226,7 +236,6 @@ public class mxImgImportCommand implements mxCommand
 		}
 		else
 		{
-			pBlockMap.put(new RGB(188,152,98), new MatM(Material.WOOD, 0));
 			pBlockMap.put(new RGB(255,255,255), new MatM(Material.WOOL, 0));
 			pBlockMap.put(new RGB(196,86,205), new MatM(Material.WOOL,1));
 			pBlockMap.put(new RGB(114,147,215), new MatM(Material.WOOL, 2));
