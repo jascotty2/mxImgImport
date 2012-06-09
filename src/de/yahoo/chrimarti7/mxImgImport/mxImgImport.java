@@ -3,112 +3,99 @@ package de.yahoo.chrimarti7.mxImgImport;
 
 //---------------------------------------------------------------------------
 import java.io.File;
-import java.util.logging.Logger;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Event;
-import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.*;
 
 //---------------------------------------------------------------------------
-public class mxImgImport extends JavaPlugin
-{
-	/*
-	 * Version Nummer + String
-	 */
-	static final String m_FullVersionName = "mxImgImport v1.3";
+public class mxImgImport extends JavaPlugin {
 
-	/*
-	 * Reference to the Logfile
-	 */
-	private static Logger log = Logger.getLogger("Minecraft");
-
-	/*
-	 * Referenz auf den Commandmanager
-	 */	
-	private mxCommandManager	m_pCommandManager;
-
-	private mxImgImportPlayerListener	m_pPlayerListener;
-	
-	@Override
-	public void onDisable()
-	{
-		log.info(m_FullVersionName + " unloaded.");
-	}
+	static String m_FullVersionName = "mxImgImport v1.4";
+	private mxCommandManager m_pCommandManager;
+	private mxImgImportPlayerListener m_pPlayerListener;
 
 	@Override
-	public void onEnable() 
-	{
-		// Erstellen
+	public void onEnable() {
+		m_FullVersionName = super.getDescription().getFullName();
+
 		m_pCommandManager = new mxCommandManager(this);
 		m_pPlayerListener = new mxImgImportPlayerListener(this);
-		
-		PluginManager pm = getServer().getPluginManager();
-		pm.registerEvent(Event.Type.PLAYER_INTERACT, m_pPlayerListener,
-				Event.Priority.Normal, this);
-		
+
+		getServer().getPluginManager().registerEvents(m_pPlayerListener, this);
+
 		File pFile = new File("plugins/mxImgImport/");
-		if (!pFile.exists())
+		if (!pFile.exists()) {
 			pFile.mkdir();
-		
-		log.info(m_FullVersionName + " loaded.");
+		}
+
+		ImageDrawer.log = 
+				mxCommandManager.log = 
+				mxImgImportCommand.log = getLogger();
 	}
 
-	static public void SendHelpText (CommandSender pPlayer)
-	{
-		pPlayer.sendMessage(ChatColor.GRAY+m_FullVersionName+" help ------------------------");
-		pPlayer.sendMessage(ChatColor.YELLOW+"/imgimport file [Filename]" + ChatColor.GRAY + "   Imports the Image. [Filename] is the Filename");
-		pPlayer.sendMessage(ChatColor.GRAY + "It is relative to the plugins/mxImgImport folder.");
-		pPlayer.sendMessage(ChatColor.YELLOW+"/imgimport file [Filename] w" + ChatColor.GRAY + "   Imports the Image only with wool Blocks.");
-		pPlayer.sendMessage(ChatColor.GRAY + "Infos at the other parameters see above.");
-		pPlayer.sendMessage(ChatColor.YELLOW+"/imgimport undo" + ChatColor.GRAY + "    Undoes your last import.");
-		pPlayer.sendMessage(ChatColor.GRAY + "You can undo an import until the next time the Server is reloaded.");
-		pPlayer.sendMessage(ChatColor.GRAY+"------------------------------------------------");
+	@Override
+	public void onDisable() {
+	}
+
+	static public void SendHelpText(CommandSender pPlayer) {
+		pPlayer.sendMessage(ChatColor.GRAY + m_FullVersionName + " help ------------------------");
+		pPlayer.sendMessage(ChatColor.YELLOW + "/imgimport file [Filename]" + ChatColor.GRAY + "   Imports the Image.");
+		pPlayer.sendMessage(ChatColor.GRAY + "(file relative to the plugins/mxImgImport folder)");
+		pPlayer.sendMessage(ChatColor.YELLOW + "/imgimport file [Filename] w" + ChatColor.GRAY + "   Use only wool blocks.");
+		pPlayer.sendMessage(ChatColor.YELLOW + "/imgimport file [Filename] f" + ChatColor.GRAY + "   Import at file resolution.");
+		//pPlayer.sendMessage(ChatColor.GRAY + "Infos at the other parameters see above.");
+		pPlayer.sendMessage(ChatColor.YELLOW + "/imgimport undo" + ChatColor.GRAY + "    Undoes your last import.");
+		//pPlayer.sendMessage(ChatColor.GRAY + "You can undo an import until the next time the Server is reloaded.");
+		pPlayer.sendMessage(ChatColor.GRAY + "------------------------------------------------");
 	}
 
 	@Override
 	public boolean onCommand(CommandSender sender, Command command,
-			String label, String[] args) 
-	{
-		if (label.equalsIgnoreCase("imgimport"))
-		{
+			String label, String[] args) {
+		if (label.equalsIgnoreCase("imgimport")) {
 			// nur /imgimport
-			if (args.length == 0)
-			{
+			if (args.length == 0 ) {
 				SendHelpText(sender);
-				return true;
-			}
-			else if (args[0].equalsIgnoreCase("file"))
-			{
-				m_pPlayerListener.m_pMap.put((Player)sender,new mxImgImportState(sender,command,label,args));
-				sender.sendMessage("Please Left-Click Block number 1");
-				return true;
-			}
-			else if (args[0].equalsIgnoreCase("undo"))
-			{
-				m_pCommandManager.UndoLastCommand(sender, command, label, args);
-				return true;
-			}
-			
-			else
-			{
-				SendHelpText(sender);
-				return true;
-			}
-			
-		}
-		else
-			return false;
-	}
-	
-	mxCommandManager GetCommandManager()
-	{
-		return m_pCommandManager;
-		
-	}
-	
+			} else if (!(sender instanceof Player)) {
+				sender.sendMessage(ChatColor.RED + "Must use as a Player");
+			} else if (args[0].equalsIgnoreCase("file")) {
 
+				String pic = ImageDrawer.getPicFilename(args[1]);
+				
+				if (pic == null) {
+					sender.sendMessage(ChatColor.RED + "File \"" + args[1] + "\" not found in mxImgImport folder");
+				} 
+//				else if (pic.substring(pic.length() - 4).equalsIgnoreCase(".jpg")
+//						|| pic.substring(pic.length() - 4).equalsIgnoreCase(".jpeg")) {
+//					sender.sendMessage(ChatColor.RED + "Due to high compression artifacts, the JPG-Format isnt Supported.");
+//				} 
+				else {
+					m_pPlayerListener.m_pMap.put((Player) sender, new mxImgImportState(sender, command, label, args));
+					sender.sendMessage("Please Left-Click Block number 1");
+				}
+			} else if (args[0].equalsIgnoreCase("undo")) {
+				m_pCommandManager.UndoLastCommand(sender, command, label, args);
+			} else {
+				String pic = ImageDrawer.getPicFilename(args[0]);
+				if (pic == null) {
+					sender.sendMessage(ChatColor.RED + "File \"" + args[1] + "\" not found in mxImgImport folder");
+					SendHelpText(sender);
+				} else {
+					m_pPlayerListener.m_pMap.put((Player) sender, new mxImgImportState(sender, command, label, args));
+					sender.sendMessage("Please Left-Click Block number 1");
+				}
+			}
+
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	mxCommandManager GetCommandManager() {
+		return m_pCommandManager;
+	}
 }

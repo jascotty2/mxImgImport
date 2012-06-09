@@ -9,18 +9,17 @@ public class mxImgImportState {
 	CommandSender cs;
 	Command c;
 	String Label;
-	String[]args;
+	String[] args;
 	Location loc1;
 	Location loc2;
-	
-	mxImgImportState(CommandSender ccs, Command cc, String cLabel, String[]cargs)
-	{
+
+	mxImgImportState(CommandSender ccs, Command cc, String cLabel, String[] cargs) {
 		cs = ccs;
 		c = cc;
 		Label = cLabel;
 		args = cargs;
 		loc1 = null;
 		loc2 = null;
-		
+
 	}
 }

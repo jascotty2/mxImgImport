@@ -1,0 +1,12 @@
+v1.4 (6/9/12)
+- updated for new bukkit system
+- added smarter file handling
+-- checks for file before executing command
+-- auto-completion
+- adeded image scaling
+-- option for legacy full-image import with 'f'
+- fixed import direction (more logical for me, at least)
+-- first point is bottom-left, 2nd is upper-right
+-- fixed north/south flat images
+- cleaned up help text
+- removed jpg restriction - they look fine to me..
