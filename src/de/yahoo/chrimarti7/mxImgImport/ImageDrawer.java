@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
 import javax.imageio.ImageIO;
@@ -24,43 +25,102 @@ import org.bukkit.command.CommandSender;
  */
 public class ImageDrawer {
 
-	static Map<RGB, MatM> colorsBlockMap = new HashMap<RGB, MatM>();
+	static Map<RGB, MatM> colorsBlockSideMap = new HashMap<RGB, MatM>(),
+			colorsBlockTopMap = new HashMap<RGB, MatM>();
 	static Map<RGB, MatM> woolBlockMap = new HashMap<RGB, MatM>();
+	static final int[] textureIdSideMap = new int[]{
+		0, 1, 3, 0, 5, 43, 0, 45, 46, 0, 0, 0, 0, 0, 0, 0,
+		4, 7, 12, 13, 17, 0, 42, 41, 57, 0, 0, 0, 0, 0, 0, 0,
+		14, 15, 16, 47, 48, 49, 0, 0, 0, 0, 0, 0, 61, 61, 23, 0,
+		19, 0, 56, 73, 0, 0, 98, 0, 0, 0, 0, 58, 58, 62, 0, 0,
+		35, 0, 80, 79, 0, 0, 0, 0, 0, 0, 84, 0, 0, 0, 0, 0,
+		0, 0, 0, 0, 0, 0, 17, 17, 0, 0, 0, 0, 0, 0, 0, 0,
+		0, 0, 0, 0, 98, 98, 0, 87, 88, 89, 29, 33, 33, 33, 0, 0,
+		0, 35, 35, 0, 17, 17, 86, 86, 91, 0, 0, 0, 0, 100, 99, 0,
+		0, 35, 35, 0, 0, 0, 0, 0, 103, 0, 0, 0, 0, 100, 99, 0,
+		22, 35, 35, 0, 0, 0, 0, 0, 0, 17, 0, 0, 0, 0, 0, 0,
+		21, 35, 35, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 121,
+		0, 35, 35, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		24, 35, 35, 0, 0, 0, 5, 5, 0, 0, 0, 0, 0, 0, 0, 0,
+		0, 35, 35, 123, 0, 0, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		112, 35, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		0, 0, 0, 0, 0, 0, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+	static final int[] textureIdTopMap = new int[]{
+		0, 1, 3, 0, 5, 43, 0, 45, 0, 46, 0, 0, 0, 0, 0, 0,
+		4, 7, 12, 13, 0, 17, 42, 41, 57, 0, 0, 0, 0, 0, 0, 0,
+		14, 15, 16, 0, 48, 49, 0, 0, 0, 0, 0, 58, 0, 0, 0, 0,
+		19, 0, 56, 73, 0, 0, 98, 0, 0, 0, 0, 0, 0, 0, 61, 0,
+		35, 0, 80, 79, 0, 0, 0, 0, 0, 0, 0, 84, 0, 0, 0, 0,
+		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		0, 0, 0, 0, 98, 98, 86, 87, 88, 89, 29, 33, 0, 33, 0, 0,
+		0, 35, 35, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 100, 99, 0,
+		0, 35, 35, 0, 0, 0, 0, 0, 0, 103, 0, 0, 0, 0, 0, 0,
+		22, 35, 35, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		21, 35, 35, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 121,
+		0, 35, 35, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		24, 35, 35, 0, 0, 0, 5, 5, 0, 0, 0, 0, 0, 0, 0, 0,
+		0, 35, 35, 123, 0, 0, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		112, 35, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		0, 0, 0, 0, 0, 0, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+	static final int[] textureDataMap = new int[]{
+		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		0, 15, 7, 0, 1, 2, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0,
+		0, 14, 6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		0, 13, 5, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0,
+		0, 12, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		0, 11, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		0, 10, 2, 0, 0, 0, 1, 3, 0, 0, 0, 0, 0, 0, 0, 0,
+		0, 9, 1, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		0, 8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		0, 0, 0, 0, 0, 0, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 	static Logger log = null;
 
 	static void init() {
-		if (colorsBlockMap.isEmpty()) {
-			colorsBlockMap.put(new RGB(160, 160, 160), new MatM(Material.STONE, 0));
-			colorsBlockMap.put(new RGB(188, 152, 98), new MatM(Material.WOOD, 0));
-			colorsBlockMap.put(new RGB(255, 255, 255), new MatM(Material.WOOL, 0));
-			colorsBlockMap.put(new RGB(214, 207, 154), new MatM(Material.SANDSTONE, 0));
-			colorsBlockMap.put(new RGB(196, 86, 205), new MatM(Material.WOOL, 1));
-			colorsBlockMap.put(new RGB(114, 147, 215), new MatM(Material.WOOL, 2));
-			colorsBlockMap.put(new RGB(33, 200, 214), new MatM(Material.WOOL, 3));
-			colorsBlockMap.put(new RGB(210, 210, 14), new MatM(Material.WOOL, 4));
-			colorsBlockMap.put(new RGB(100, 230, 0), new MatM(Material.WOOL, 5));
-			colorsBlockMap.put(new RGB(224, 155, 173), new MatM(Material.WOOL, 6));
-			colorsBlockMap.put(new RGB(71, 71, 71), new MatM(Material.WOOL, 7));
-			colorsBlockMap.put(new RGB(173, 180, 180), new MatM(Material.WOOL, 8));
-			colorsBlockMap.put(new RGB(43, 129, 166), new MatM(Material.WOOL, 9));
-			colorsBlockMap.put(new RGB(90, 0, 90), new MatM(Material.WOOL, 10));
-			colorsBlockMap.put(new RGB(40, 53, 161), new MatM(Material.WOOL, 11));
-			colorsBlockMap.put(new RGB(93, 56, 30), new MatM(Material.WOOL, 12));
-			colorsBlockMap.put(new RGB(57, 78, 25), new MatM(Material.WOOL, 13));
-			colorsBlockMap.put(new RGB(250, 0, 0), new MatM(Material.WOOL, 14));
-			colorsBlockMap.put(new RGB(0, 0, 0), new MatM(Material.WOOL, 15));
-			colorsBlockMap.put(new RGB(150, 125, 70), new MatM(Material.LOG, 0));
-			colorsBlockMap.put(new RGB(57, 46, 28), new MatM(Material.LOG, 1));
-			colorsBlockMap.put(new RGB(255, 251, 93), new MatM(Material.GOLD_BLOCK, 0));
-			colorsBlockMap.put(new RGB(213, 213, 213), new MatM(Material.IRON_BLOCK, 0));
-			colorsBlockMap.put(new RGB(176, 176, 176), new MatM(Material.DOUBLE_STEP, 0));
-			colorsBlockMap.put(new RGB(46, 46, 61), new MatM(Material.OBSIDIAN, 0));
-			colorsBlockMap.put(new RGB(120, 108, 30), new MatM(Material.CHEST, 0));
-			//pBlockMap.put(new RGB(35,80,35),new MatM( Material.MOSSY_COBBLESTONE, 0));
-			colorsBlockMap.put(new RGB(160, 240, 240), new MatM(Material.DIAMOND_BLOCK, 0));
-			//		colorsBlockMap.put(new RGB(100,56,56),new MatM( Material.NETHERRACK, 0));
-			//	colorsBlockMap.put(new RGB(200,0,200),new MatM( Material.GLOWSTONE, 0));
+
+		if (woolBlockMap.isEmpty()) {
+			try {
+				File textureFile = new File("plugins/mxImgImport/terrain.png");
+				BufferedImage texturePack = null;
+				if (textureFile.exists() && textureFile.canRead()) {
+					texturePack = ImageIO.read(textureFile);
+				}
+				int i = 0;
+				for (int y = 0; y < 16; ++y) {
+					for (int x = 0; x < 16; ++x) {
+						if (textureIdTopMap[i] != 0) {
+//							System.out.println(x + "x" + y + ":"
+//									+ Material.getMaterial(textureIdTopMap[i]).name() + "x" + textureDataMap[i]);
+							RGB col = averageColor(texturePack, 16 * x, 16 * y, 16, 16);
+							MatM mat = new MatM(Material.getMaterial(textureIdTopMap[i]), textureDataMap[i]);
+							if (textureIdTopMap[i] == 35) {
+								woolBlockMap.put(col, mat);
+							}
+							colorsBlockTopMap.put(col, mat);
+						}
+						if (textureIdSideMap[i] != 0) {
+							RGB col = averageColor(texturePack, 16 * x, 16 * y, 16, 16);
+							MatM mat = new MatM(Material.getMaterial(textureIdSideMap[i]), textureIdSideMap[i]);
+							colorsBlockSideMap.put(col, mat);
+						}
+						++i;
+					}
+				}
+//				for (RGB k : colorsBlockSideMap.keySet()) {
+//					if (colorsBlockSideMap.get(k).mat.getId() == 35) {
+//						System.out.println("wool:" + colorsBlockSideMap.get(k).ss + " - " + k.r + ", " + k.g + ", " + k.b);
+//					}
+//				}
+			} catch (IOException ex) {
+				Logger.getLogger(ImageDrawer.class.getName()).log(Level.SEVERE, null, ex);
+			}
 		}
+		// old mappings
 		if (woolBlockMap.isEmpty()) {
 			woolBlockMap.put(new RGB(255, 255, 255), new MatM(Material.WOOL, 0));
 			woolBlockMap.put(new RGB(196, 86, 205), new MatM(Material.WOOL, 1));
@@ -79,6 +139,49 @@ public class ImageDrawer {
 			woolBlockMap.put(new RGB(250, 0, 0), new MatM(Material.WOOL, 14));
 			woolBlockMap.put(new RGB(0, 0, 0), new MatM(Material.WOOL, 15));
 		}
+		if (colorsBlockSideMap.isEmpty()) {
+			colorsBlockSideMap.putAll(woolBlockMap);
+			colorsBlockSideMap.put(new RGB(160, 160, 160), new MatM(Material.STONE, 0));
+			colorsBlockSideMap.put(new RGB(188, 152, 98), new MatM(Material.WOOD, 0));
+			colorsBlockSideMap.put(new RGB(255, 255, 255), new MatM(Material.WOOL, 0));
+			colorsBlockSideMap.put(new RGB(214, 207, 154), new MatM(Material.SANDSTONE, 0));
+			colorsBlockSideMap.put(new RGB(150, 125, 70), new MatM(Material.LOG, 0));
+			colorsBlockSideMap.put(new RGB(57, 46, 28), new MatM(Material.LOG, 1));
+			colorsBlockSideMap.put(new RGB(255, 251, 93), new MatM(Material.GOLD_BLOCK, 0));
+			colorsBlockSideMap.put(new RGB(213, 213, 213), new MatM(Material.IRON_BLOCK, 0));
+			colorsBlockSideMap.put(new RGB(176, 176, 176), new MatM(Material.DOUBLE_STEP, 0));
+			colorsBlockSideMap.put(new RGB(46, 46, 61), new MatM(Material.OBSIDIAN, 0));
+			colorsBlockSideMap.put(new RGB(120, 108, 30), new MatM(Material.CHEST, 0));
+			//pBlockMap.put(new RGB(35,80,35),new MatM( Material.MOSSY_COBBLESTONE, 0));
+			colorsBlockSideMap.put(new RGB(160, 240, 240), new MatM(Material.DIAMOND_BLOCK, 0));
+			//		colorsBlockSideMap.put(new RGB(100,56,56),new MatM( Material.NETHERRACK, 0));
+			//	colorsBlockSideMap.put(new RGB(200,0,200),new MatM( Material.GLOWSTONE, 0));
+			colorsBlockTopMap.putAll(colorsBlockSideMap);
+		}
+	}
+
+	static RGB averageColor(BufferedImage img, int ix, int iy, int width, int height) {
+		long r = 0, b = 0, g = 0, n = 0;
+		for (int x = ix, i = 0; x < img.getWidth() && i < width; ++x, ++i) {
+			for (int y = iy, j = 0; y < img.getHeight() && j < height; ++y, ++j) {
+
+				int pixel = img.getRGB(x, y);
+				int alpha = (pixel >> 24) & 0xff;
+				int red = (pixel >> 16) & 0xff;
+				int green = (pixel >> 8) & 0xff;
+				int blue = (pixel) & 0xff;
+
+				if (alpha != 0) {
+					r += red;
+					g += green;
+					b += blue;
+					++n;
+				}
+			}
+		}
+		System.out.println("n: " + n + " - " + r + ", " + g + ", " + b + " : "
+				+ (int) ((double) r / n) + ", " + (int) ((double) g / n) + ", " + (int) ((double) b / n));
+		return n > 0 ? new RGB((int) ((double) r / n), (int) ((double) g / n), (int) ((double) b / n)) : new RGB(0, 0, 0);
 	}
 
 	static float ColorDistance(RGB a, RGB b) {
@@ -130,16 +233,17 @@ public class ImageDrawer {
 			log.info("Importing Image '" + imageFile.getName() + "' (" + Integer.toString(pImageFile.getWidth()) + "x" + Integer.toString(pImageFile.getHeight()) + ")");
 		}
 
+		int UnitX = sign(loc_2.getBlockX() - loc_1.getBlockX());
+		int UnitY = sign(loc_2.getBlockY() - loc_1.getBlockY());
+		int UnitZ = sign(loc_2.getBlockZ() - loc_1.getBlockZ());
+
 		init();
-		Map<RGB, MatM> pBlockMap = allblocks ? colorsBlockMap : woolBlockMap;
+		Map<RGB, MatM> pBlockMap = allblocks ? 
+				(UnitY == 0 ? colorsBlockTopMap : colorsBlockSideMap) : woolBlockMap;
 
 		if (m_pUndoMap != null) {
 			m_pUndoMap.clear();
 		}
-
-		int UnitX = sign(loc_2.getBlockX() - loc_1.getBlockX());
-		int UnitY = sign(loc_2.getBlockY() - loc_1.getBlockY());
-		int UnitZ = sign(loc_2.getBlockZ() - loc_1.getBlockZ());
 
 		if (scaleImage) {
 			int height, width;
@@ -162,7 +266,7 @@ public class ImageDrawer {
 				height = Math.abs(loc_2.getBlockY() - loc_1.getBlockY());
 				width = Math.abs(loc_2.getBlockX() - loc_1.getBlockX());
 			}
-			
+
 			double scaleY = (double) height / pImageFile.getHeight();
 			double scaleX = (double) width / pImageFile.getWidth();
 			double scale = scaleY > scaleX ? scaleX : scaleY;
@@ -286,7 +390,7 @@ class ImageSearchFilter implements FileFilter {
 
 	String searchFilename;
 	private static final String IMAGE_PATTERN =
-			"([^\\s]+(\\.(?i)(png|gif|bmp|jpg|jpeg))$)";
+			"([^\\s]+(\\.(?i)(png|gif|bmp|jpg|jpeg|wbmp|gif))$)";
 	private static Pattern pattern = Pattern.compile(IMAGE_PATTERN);
 
 	public ImageSearchFilter(String searchFilename) {
@@ -314,6 +418,10 @@ class MatM {
 
 class RGB {
 
+	int r;
+	int g;
+	int b;
+
 	RGB(Color a) {
 		r = a.getRed();
 		g = a.getGreen();
@@ -338,7 +446,4 @@ class RGB {
 	int getBlue() {
 		return b;
 	}
-	int r;
-	int g;
-	int b;
 }

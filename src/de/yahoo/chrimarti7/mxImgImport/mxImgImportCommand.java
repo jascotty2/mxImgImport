@@ -1,7 +1,6 @@
 package de.yahoo.chrimarti7.mxImgImport;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.logging.Logger;
@@ -35,10 +34,6 @@ public class mxImgImportCommand implements mxCommand {
 	@Override
 	public boolean Do(CommandSender sender, Command command, String label, String[] args) {
 
-		if (args.length < 2) {
-			mxImgImport.SendHelpText(sender);
-			return false;
-		}
 		if (sender == null) {
 			if (log != null)
 			log.info(ChatColor.RED + "No sender instance");
@@ -78,17 +73,18 @@ public class mxImgImportCommand implements mxCommand {
 			sender.sendMessage(ChatColor.RED + "The Selection Points have to lie on a 2D Plane");
 			return false;
 		}
+		boolean abv = !args[0].equalsIgnoreCase("file");
 		
 		boolean allBlocks = true, scaleImage = true;
 		
-		if(args.length >= 3) {
-			for(int i = 2; i < args.length; ++i) {
+		if(args.length >= (abv ? 2 : 3)) {
+			for(int i = (abv ? 1 : 2); i < args.length; ++i) {
 				if(args[i].toLowerCase().charAt(0) == 'w') allBlocks = false;
 				else if(args[i].toLowerCase().charAt(0) == 'f') scaleImage = false;
 			}
 		}
 		
-		return ImageDrawer.Draw(sender, m_Loc1, m_Loc2,  args[1], allBlocks, scaleImage, m_pUndoMap);
+		return ImageDrawer.Draw(sender, m_Loc1, m_Loc2, abv ? args[0] : args[1], allBlocks, scaleImage, m_pUndoMap);
 	}
 
 	private int Sign(double x) {
